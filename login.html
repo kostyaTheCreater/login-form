@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>SPA</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Roboto:wght@100&display=swap" rel="stylesheet">
+		<style>
+		#circle1{
+			height: 90px;
+			width: 90px;
+			background: #8DDCF5;
+			position: absolute;
+			left: 40px;
+			border-radius: 50%;
+		}
+		#circle2{
+			height: 60px;
+			width: 60px;
+			background: #DFE250;
+			position: absolute;
+			left: 30px;
+			top: 30px;
+			border-radius: 50%;
+		}
+		
+		h1{
+            margin-top: 3%;
+			text-align: center;
+			font-family: Roboto;
+			font-size: 300%;
+		}
+		
+		#login{
+			position: fixed;
+		}
+
+		.login{
+			padding: 50px;
+			position: fixed; top: 50%; left: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+		
+		.invalid{
+			outline: solid 3px red;
+		}
+		
+		.emailInvalid{
+			outline: solid 3px red;;
+		}
+		
+		#login input, button{
+			height: 50px;
+			width: 350px;
+			border-radius: 7px;
+			border: solid 3px black;
+			font-size: 125%;
+			margin-top: 30px;
+			font-family: Poppins;
+		}
+		
+		.focused{
+			outline: 3px solid #3677F6;
+			color: black;
+		}
+		
+		.unfocused{
+			color: silver;
+		}
+		
+		
+		#send{
+			position: absolute;
+			background-color: black;
+			color: white;
+			margin-left: 5px;
+			margin-top: 5%;
+			height: 50px;
+			width: 350px;
+			border-radius: 7px;
+			border: solid 3px black;
+			font-size: 125%;
+			cursor: pointer;
+		}
+		
+		#send:hover{
+			background-color: #3677F6;
+			color: black;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<div id='circle1'></div>
+		<div id="circle2"></div>
+		<h1 id="header">Please, login</h1>
+		<form id="login" name="login" class="login">
+			<input name='email' type="email" class='unfocused' placeholder="Email"><br>
+			<input name='password' type="password" class='unfocused' placeholder="Password"><br>
+			<button type="submit" id="send">send</button>
+		</form>
+
+		<script> 
+			'use strict';
+
+			let login = document.getElementById('login');
+			
+			login.addEventListener('focusin', (event) => {
+				let input = event.target;
+			
+				input.classList.remove('unfocused');
+			
+				if(input.classList.contains('invalid')){
+					input.classList.remove('invalid');
+				}
+				input.classList.add('focused');
+			
+			});
+			
+			login.addEventListener("focusout", (event) => {
+				let input = event.target;
+				input.classList.remove('focused');
+			
+				input.classList.add('unfocused');
+			
+				if(input.id == 'email'){
+					if(input.classList.contains('emailInvalid')){
+						input.classList.remove('emailInvalid');
+					}
+					if(!input.value.includes('@') || !input.value.includes('.com')){
+						input.classList.add('emailInvalid');
+					}
+				}
+				if (input.value == ''){
+					input.classList.add('invalid');
+				 }
+			});
+
+            let send = document.getElementById('send');
+
+            send.onclick = async function(event){
+
+					let email = login.elements["email"].value;
+					let password = login.elements["password"].value;
+
+    	            let user = JSON.stringify({
+        	            email: email,
+						password: password
+                	});
+
+					let response = await fetch('/login', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json;charset=utf-8'
+						},
+						body: user
+					});
+
+					let result = await response.json();
+					console.log(result.message);
+
+                // let request = new XMLHttpRequest();
+                // request.open('POST', '/login', true);
+                // request.setRequestHeader('Content-Type', 'application/json');
+                
+                // request.addEventListener("load", function () {
+                // // получаем и парсим ответ сервера
+                // let receivedUser = JSON.parse(request.response);
+                // console.log(receivedUser); 
+                // });
+                // request.send(user);
+            }
+		</script>
+	</body>
+</html>
